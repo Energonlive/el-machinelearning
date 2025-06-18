@@ -1,13 +1,10 @@
-# 📦 Streamlit App Starter Kit 
-```
-⬆️ (Replace above with your app's name)
-```
+# 🪙 Loan Risk Prediction App
 
-Description of the app ...
+This is a machine learning app which predicts if an individual will pay a loan in full or they will default and be charged off
 
 ## Demo App
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://app-starter-kit.streamlit.app/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://el-machinelearning.streamlit.app/)
 
 ## GitHub Codespaces
 
