@@ -235,7 +235,7 @@ with tab1:
                     + [total_acc, mort_acc]
                 ).reshape(1, -1)
 
-                loaded_model = joblib.load('xgb_final_pipeline.joblib')
+                loaded_model = joblib.load('xgb_final_pipeline_no_undersample.joblib')
                 prediction = loaded_model.predict(input_data)
                 prediction_proba = loaded_model.predict_proba(input_data)[0][1]
 
