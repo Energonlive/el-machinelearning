@@ -35,7 +35,7 @@ with tab1:
     annual_inc_input = st.text_input("Enter Annual Income ($) (e.g 10000 or 10,000)")
     annual_inc = None
     try:
-        annual_inc = float(annual_inc_input.replace(',', ''))
+        annual_inc = float(annual_inc_input.strip().replace(',', ''))
         if annual_inc >= 0:
             st.success(f"Annual Income: ${annual_inc:,.2f}")
         else:
@@ -50,7 +50,7 @@ with tab1:
     dti_input = st.text_input("Enter DTI (Debt-to-Income ratio) (%)")
     dti = None
     try:
-        dti = float(dti_input)
+        dti = float(dti_input.strip())
         if 0.0 <= dti <= 100.0:
             st.success(f"DTI: {dti}%")
         else:
@@ -62,7 +62,7 @@ with tab1:
     revol_util_input = st.text_input("Enter Revolving Line Utilization (%)")
     revol_util = None
     try:
-        revol_util = float(revol_util_input)
+        revol_util = float(revol_util_input.strip())
         if 0.0 <= revol_util <= 100.0:
             st.success(f"Revolving Utilization: {revol_util}%")
         else:
@@ -75,7 +75,7 @@ with tab1:
     revol_bal_input = st.text_input("Enter Revolving Balance ($) (e.g 10000 or 10,000)")
     revol_bal = None
     try:
-        revol_bal = float(revol_bal_input.replace(',', ''))
+        revol_bal = float(revol_bal_input.strip().replace(',', ''))
         if revol_bal >= 0:
             st.success(f"Revolving Balance: ${revol_bal:,.2f}")
         else:
@@ -87,7 +87,7 @@ with tab1:
     open_acc_input = st.text_input("Enter Number of Open Credit Lines")
     open_acc = None
     try:
-        open_acc = int(open_acc_input)
+        open_acc = int(open_acc_input.strip())
         if open_acc >= 0:
             st.success(f"Open Credit Lines: {open_acc}")
         else:
@@ -99,7 +99,7 @@ with tab1:
     loan_amount_input = st.text_input("Enter Loan Amount ($) (e.g 10000 or 10,000)")
     loan_amount = None
     try:
-        loan_amount = float(loan_amount_input.replace(',', ''))
+        loan_amount = float(loan_amount_input.strip().replace(',', ''))
         if loan_amount > 0:
             st.success(f"Loan Amount: ${loan_amount:,.2f}")
         else:
@@ -111,7 +111,7 @@ with tab1:
     int_rate_input = st.text_input("Enter Interest Rate (%) (per annum, e.g 10.5)")
     int_rate = None
     try:
-        int_rate = float(int_rate_input)
+        int_rate = float(int_rate_input.strip())
         if 0.0 <= int_rate <= 100.0:
             st.success(f"Interest Rate: {int_rate:.2f}%")
         else:
@@ -155,7 +155,7 @@ with tab1:
     cred_hist_input = st.text_input("Enter Credit History Length (in years)")
     cred_hist_years = None
     try:
-        cred_hist_years = float(cred_hist_input)
+        cred_hist_years = float(cred_hist_input.strip())
         if cred_hist_years >= 0:
             st.success(f"Credit History Length: {cred_hist_years} years")
         else:
@@ -170,7 +170,7 @@ with tab1:
     total_acc_input = st.text_input("Enter Total Number of Credit Accounts")
     total_acc = None
     try:
-        total_acc = int(total_acc_input)
+        total_acc = int(total_acc_input.strip())
         if total_acc >= 0:
             st.success(f"Total Credit Accounts: {total_acc}")
         else:
@@ -182,7 +182,7 @@ with tab1:
     mort_acc_input = st.text_input("Enter Number of Mortgage Accounts")
     mort_acc = None
     try:
-        mort_acc = int(mort_acc_input)
+        mort_acc = int(mort_acc_input.strip())
         if mort_acc >= 0:
             st.success(f"Mortgage Accounts: {mort_acc}")
         else:
