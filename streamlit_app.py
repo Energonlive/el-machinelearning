@@ -28,8 +28,13 @@ with tab1:
     st.write(f"You selected zipcode: {selected_zipcode}")
     
     subgrades = [f"{grade}{i}" for grade in "ABCDEFG" for i in range(1, 6)]
-
     selected_subgrade = st.selectbox("Select Subgrade", subgrades)
+    st.write(f"You selected subgrade: {selected_subgrade}")
 
     selected_term = st.radio("Select Term (months)", [36, 60])
     st.write(f"You selected term: {selected_term} months")
+
+    dti = st.number_input("Enter DTI (Debt-to-Income ratio) (%)", min_value=0.0, max_value=100.0, step=0.1, format="%.2f")
+    st.write(f"You entered DTI: {dti}")
+
+    revol_util = st.number_input("Revolving Line Utilization (%) ()", min_value=0.0, max_value=100.0, step=0.1, format="%.2f")
