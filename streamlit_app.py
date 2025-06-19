@@ -426,7 +426,7 @@ with tab3:
         - Log transforms (`annual_inc`, `revol_bal`)
         - Undersammpling to address class imbalance.
         - Hyperparameter tuning using `Optuna` for optimal performance.
-        - Model saved as `xgb_final_pipeline.joblib`.
+        - Model saved as `xgb_final__no_undersample_pipeline.joblib` (due to issues in deployment, I had remove the undersampler from the pipeline, that does not affect the trained weights though).
         - Single applicant prediction with detailed input fields.
         - Bulk prediction feature for processing multiple applicants at once.
         - Installment calculation based on loan amount, interest rate, and term.
