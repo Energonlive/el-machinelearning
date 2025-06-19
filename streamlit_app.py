@@ -184,6 +184,18 @@ with tab1:
             if revol_bal_input:
                 st.error("Please enter a valid number.")
 
+        total_acc_input = st.text_input("Enter **Total Number of Credit Accounts**", key="total_acc_input")
+        total_acc = None
+        try:
+            total_acc = int(total_acc_input.strip())
+            if total_acc >= 0:
+                st.success(f"Total Credit Accounts: {total_acc}")
+            else:
+                st.warning("Total accounts cannot be negative.")
+        except ValueError:
+            if total_acc_input:
+                st.error("Please enter a valid whole number.")
+                
         cred_hist_input = st.text_input("Enter **Credit History Length** (in years)", key="cred_hist_input")
         cred_hist_years = None
         try:
@@ -196,17 +208,6 @@ with tab1:
             if cred_hist_input:
                 st.error("Please enter a valid whole number.")
 
-        total_acc_input = st.text_input("Enter **Total Number of Credit Accounts**", key="total_acc_input")
-        total_acc = None
-        try:
-            total_acc = int(total_acc_input.strip())
-            if total_acc >= 0:
-                st.success(f"Total Credit Accounts: {total_acc}")
-            else:
-                st.warning("Total accounts cannot be negative.")
-        except ValueError:
-            if total_acc_input:
-                st.error("Please enter a valid whole number.")
 
 
 
