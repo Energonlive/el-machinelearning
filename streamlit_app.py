@@ -26,12 +26,13 @@ with tab1:
                             list(zipcode_locations.keys()),
                             format_func=lambda x: zipcode_locations[x])
     st.write(f"You selected zipcode: {selected_zipcode}")
-    
+
     subgrades = [f"{grade}{i}" for grade in "ABCDEFG" for i in range(1, 6)]
     selected_subgrade = st.selectbox("Select Subgrade", subgrades)
     st.write(f"You selected subgrade: {selected_subgrade}")
 
-    annual_inc_input = st.text_input("Enter Annual Income ($)")
+    annual_inc_input = st.text_input("Enter Annual Income ($) (e.g 10000 or 10,000)")
+    annual_inc = None
     try:
         annual_inc = float(annual_inc_input.replace(',', ''))
         if annual_inc >= 0:
@@ -46,7 +47,6 @@ with tab1:
     st.write(f"You selected term: {selected_term} months")
 
     dti_input = st.text_input("Enter DTI (Debt-to-Income ratio) (%)")
-
     try:
         dti = float(dti_input)
         if 0.0 <= dti <= 100.0:
@@ -58,7 +58,7 @@ with tab1:
             st.error("Please enter a valid number.")
 
     revol_util_input = st.text_input("Enter Revolving Line Utilization (%)")
-
+    revol_util = None
     try:
         revol_util = float(revol_util_input)
         if 0.0 <= revol_util <= 100.0:
@@ -68,4 +68,79 @@ with tab1:
     except ValueError:
         if revol_util_input:
             st.error("Please enter a valid number.")
+
+
+    revol_bal_input = st.text_input("Enter Revolving Balance ($) (e.g 10000 or 10,000)")
+    revol_bal = None
+    try:
+        revol_bal = float(revol_bal_input.replace(',', ''))
+        if revol_bal >= 0:
+            st.success(f"Revolving Balance: ${revol_bal:,.2f}")
+        else:
+            st.warning("Revolving balance cannot be negative.")
+    except ValueError:
+        if revol_bal_input:
+            st.error("Please enter a valid number.")
+
+    open_acc_input = st.text_input("Enter Number of Open Credit Lines")
+    open_acc = None
+    try:
+        open_acc = int(open_acc_input)
+        if open_acc >= 0:
+            st.success(f"Open Credit Lines: {open_acc}")
+        else:
+            st.warning("Number of open accounts cannot be negative.")
+    except ValueError:
+        if open_acc_input:
+            st.error("Please enter a valid whole number.")
+
+    loan_amount_input = st.text_input("Enter Loan Amount ($) (e.g 10000 or 10,000)")
+    loan_amount = None
+    try:
+        loan_amount = float(loan_amount_input.replace(',', ''))
+        if loan_amount > 0:
+            st.success(f"Loan Amount: ${loan_amount:,.2f}")
+        else:
+            st.warning("Loan amount must be greater than 0.")
+    except ValueError:
+        if loan_amount_input:
+            st.error("Please enter a valid number.")
+
+    int_rate_input = st.text_input("Enter Interest Rate (%) (per annum, e.g 10.5)")
+    int_rate = None
+    try:
+        int_rate = float(int_rate_input)
+        if 0.0 <= int_rate <= 100.0:
+            st.success(f"Interest Rate: {int_rate:.2f}%")
+        else:
+            st.warning("Interest rate must be between 0 and 100.")
+    except ValueError:
+        if int_rate_input:
+            st.error("Please enter a valid number.")
+
+    installement_display = ""
+    if loan_amount is not None and int_rate is not None and selected_term is not None:
+        monthly_rate = int_rate / 100 / 12
+        try:
+            if monthly_rate == 0:
+                installement = loan_amount / selected_term
+            else:
+                installement = (loan_amount * monthly_rate) / (1 - (1 + monthly_rate) ** -selected_term)
+            installement_display = f"{installement:.2f}"
+        except ZeroDivisionError:
+            st.error("Installment calculation failed Please check inputs.")
+    
+    st.text_input("Calculated Monthly Installment ($)", value=f"{installement_display}" if 'installement' in locals() else "", disabled=True)
+    st.text(f"Installment: ${installement:.2f}" if 'installement' in locals() else "Installment will be calculated after entering all required fields.")
+    st.markdown(
+        """
+        **Note:** Installment is calculated using the formula:  
+        `Installment = (Loan Amount x Monthly Interest Rate) / (1 - (1 + Monthly Interest Rate)^-Term)`  
+        Where:  
+        - Monthly Interest Rate = Annual Interest Rate / 100 / 12
+        """
+    )
+    
+    # home_ownership = st.selectbox("Select Home Ownership", ["RENT", "MORTGAGE", "OWN", "OTHER"])
+
 
