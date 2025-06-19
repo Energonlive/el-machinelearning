@@ -8,9 +8,9 @@ st.title('🪙 Loan Risk Prediction Machine Learning App')
 tab1, tab2, tab3 = st.tabs(["Predict Loan Risk", "Bulk Predict", "Model Information"])
 
 with tab1: 
-    st.subheader('Predict Loan Risk for a Single Applicant')
+    st.header('Predict Loan Risk for a Single Applicant')
 
-    st.header("Loan Information")
+    st.subheader("Loan Information")
     st.markdown("---")
 
     col1, col2 = st.columns(2)
@@ -76,7 +76,7 @@ with tab1:
         """
     )
 
-    st.header("Personal Information")
+    st.subheader("Personal Information")
     st.markdown("---")
 
     col3, col4 = st.columns(2)
@@ -130,7 +130,7 @@ with tab1:
     st.write(f"You selected zipcode: {selected_zipcode}")
 
 
-    st.header("Credit Information")
+    st.subheader("Credit Information")
     st.markdown("---")
 
     col5, col6 = st.columns(2)
