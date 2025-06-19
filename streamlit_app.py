@@ -1,6 +1,9 @@
 import streamlit as st
 import numpy as np
+import pandas as pd
+import os
 import joblib
+import streamlit.runtime.scriptrunner.script_run_context as script_run_context
 
 st.title('🪙 Loan Risk Prediction Machine Learning App')
 tab1, tab2, tab3 = st.tabs(["Predict Loan Risk", "Bulk Predict", "Model Information"])
@@ -147,6 +150,150 @@ with tab1:
         """
     )
     
-    # home_ownership = st.selectbox("Select Home Ownership", ["RENT", "MORTGAGE", "OWN", "OTHER"])
+    selected_home_ownership_status = st.selectbox("Select Home Ownership Status", ["Mortgage", "Own", "Rent", "Other"])
+    st.write(f"You selected: {selected_home_ownership_status}")
+
+    cred_hist_input = st.text_input("Enter Credit History Length (in years)")
+    cred_hist_years = None
+    try:
+        cred_hist_years = float(cred_hist_input)
+        if cred_hist_years >= 0:
+            st.success(f"Credit History Length: {cred_hist_years} years")
+        else:
+            st.warning("Credit history length cannot be negative.")
+    except ValueError:
+        if cred_hist_input:
+            st.error("Please enter a valid whole number.")
+    
+    selected_verification_status = st.selectbox("Select Verification Status", ["Source Verified", "Verified", "Not Verified"])
+    st.write(f"You selected: {selected_verification_status}")
+
+    total_acc_input = st.text_input("Enter Total Number of Credit Accounts")
+    total_acc = None
+    try:
+        total_acc = int(total_acc_input)
+        if total_acc >= 0:
+            st.success(f"Total Credit Accounts: {total_acc}")
+        else:
+            st.warning("Total accounts cannot be negative.")
+    except ValueError:
+        if total_acc_input:
+            st.error("Please enter a valid whole number.")
+
+    mort_acc_input = st.text_input("Enter Number of Mortgage Accounts")
+    mort_acc = None
+    try:
+        mort_acc = int(mort_acc_input)
+        if mort_acc >= 0:
+            st.success(f"Mortgage Accounts: {mort_acc}")
+        else:
+            st.warning("Mortgage accounts cannot be negative.")
+    except ValueError:
+        if mort_acc_input:
+            st.error("Please enter a valid whole number.")
 
 
+
+
+    subgrade_encoded = subgrades.index(selected_subgrade) if selected_subgrade in subgrades else -1
+
+    is_valid = all(v is not None for v in [
+        annual_inc, dti, revol_util, revol_bal, open_acc, selected_term,
+        installment, loan_amount, cred_hist_years, total_acc, mort_acc
+    ]) and subgrade_encoded != -1
+
+    if 'predict_clicked' not in st.session_state:
+        st.session_state.predict_clicked = False
+
+    if not st.session_state.predict_clicked:
+        predict_clicked = st.button("🧮 Predict Loan Risk", disabled=not is_valid)
+        
+        if predict_clicked:
+            st.session_state.predict_clicked = True
+
+            with st.spinner("⏳ Processing prediction..."):
+                input_data = np.array(
+                    [
+                        1 if selected_zipcode == z.split("_")[-1] else 0 for z in [
+                            'zip_code_05113', 'zip_code_11650', 'zip_code_22690', 'zip_code_29597',
+                            'zip_code_30723', 'zip_code_48052', 'zip_code_70466', 'zip_code_86630', 'zip_code_93700'
+                        ]
+                    ]
+                    + [subgrade_encoded, np.log1p(annual_inc), selected_term,
+                        dti, revol_util, np.log1p(revol_bal), open_acc, installment,
+                        loan_amount, int_rate
+                    ]
+                    + [1 if selected_home_ownership_status.upper() == h.split("_")[-1] else 0 for h in [
+                        'home_ownership_OTHER', 'home_ownership_OWN', 'home_ownership_RENT'
+                    ]]
+                    + [cred_hist_years]
+                    + [1 if selected_verification_status.replace(" ", "_") == v.split("_", 1)[-1] else 0 for v in [
+                        'verification_status_Source_Verified', 'verification_status_Verified'
+                    ]]
+                    + [total_acc, mort_acc]
+                ).reshape(1, -1)
+
+                loaded_model = joblib.load('xgb_final_pipeline.joblib')
+                prediction = loaded_model.predict(input_data)
+                prediction_proba = loaded_model.predict_proba(input_data)[0][1]
+
+                if prediction[0] == 1:
+                    st.subheader("Prediction Result")
+                    st.success("✅ Prediction completed successfully!")
+                    st.toast("Prediction complete!")
+                    result_text = "🟢 **The loan is likely to be fully paid.**"
+                else:
+                    st.subheader("Prediction Result")
+                    st.success("✅ Prediction completed successfully!")
+                    st.toast("Prediction complete!")
+                    result_text = "🔴 **The loan is likely to default.**"
+
+                st.markdown(f"<h3 style='color:#333;'>{result_text}</h3>", unsafe_allow_html=True)
+                st.markdown(f"<b>🧮 Probability of Full Payment:</b> {prediction_proba:.2%}")
+
+                save_data = pd.DataFrame({
+                    'zip_code': [selected_zipcode],
+                    'subgrade': [selected_subgrade],
+                    'annual_inc': [annual_inc],
+                    'term': [selected_term],
+                    'dti': [dti],
+                    'revol_util': [revol_util],
+                    'revol_bal': [revol_bal],
+                    'open_acc': [open_acc],
+                    'loan_amnt': [loan_amount],
+                    'int_rate': [int_rate],
+                    'installment': [installment],
+                    'home_ownership': [selected_home_ownership_status],
+                    'cred_hist_years': [cred_hist_years],
+                    'verification_status': [selected_verification_status],
+                    'total_acc': [total_acc],
+                    'mort_acc': [mort_acc],
+                    'prediction': [int(prediction[0])],
+                    'proba_full_pay': [prediction_proba]
+                })
+
+                if not os.path.exists("predictions.csv"):
+                    save_data.to_csv("predictions.csv", index=False)
+                else:
+                    save_data.to_csv("predictions.csv", mode='a', header=False, index=False)
+
+                st.success("📁 Prediction saved to predictions.csv ✅")
+
+                def is_streamlit_cloud():
+                    try:
+                        ctx = script_run_context.get_script_run_ctx()
+                        return ctx is not None and "cloud" in ctx.session_id
+                    except:
+                        return False
+                    
+                if is_streamlit_cloud():
+                    if os.path.exists("predictions.csv"):
+                        with open("predictions.csv", "rb") as file:
+                            st.download_button(
+                                label="📥 Download predictions.csv",
+                                data=file,
+                                file_name="predictions.csv",
+                                mime="text/csv"
+                            )
+
+            st.session_state.predict_clicked = False
