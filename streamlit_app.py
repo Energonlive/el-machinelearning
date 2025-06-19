@@ -123,15 +123,21 @@ with tab1:
         monthly_rate = int_rate / 100 / 12
         try:
             if monthly_rate == 0:
-                installement = loan_amount / selected_term
+                installment = loan_amount / selected_term
             else:
-                installement = (loan_amount * monthly_rate) / (1 - (1 + monthly_rate) ** -selected_term)
-            installement_display = f"{installement:.2f}"
+                installment = (loan_amount * monthly_rate) / (1 - (1 + monthly_rate) ** -selected_term)
+            installment_display = f"{installment:.2f}"
         except ZeroDivisionError:
             st.error("Installment calculation failed Please check inputs.")
     
-    st.text_input("Calculated Monthly Installment ($)", value=f"{installement_display}" if 'installement' in locals() else "", disabled=True)
-    st.text(f"Installment: ${installement:.2f}" if 'installement' in locals() else "Installment will be calculated after entering all required fields.")
+    st.text_input("Calculated Monthly Installment ($)", value=f"{installment_display}" if 'installement' in locals() else "", disabled=True)
+    
+    st.info("Installment will be calculated after entering all required fields.")  
+    if 'installment' in locals():
+        st.write(f"Installment: ${installement_display}")
+    else:
+        st.info("Installment will be calculated after entering all required fields.")
+        
     st.markdown(
         """
         **Note:** Installment is calculated using the formula:  
