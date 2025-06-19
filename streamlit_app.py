@@ -312,7 +312,6 @@ with tab1:
 with tab2:
 
     try:
-        st.error(f"Error processing file: {e}")
         st.header('📊 Bulk Predict Loan Risk from CSV File')
         st.code("""zip_code, subgrade, annual_inc, term, dti, revol_util, revol_bal,
                     open_acc, loan_amnt, int_rate, installment, home_ownership, 
