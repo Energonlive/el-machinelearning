@@ -197,13 +197,13 @@ with tab1:
 
     subgrade_encoded = subgrades.index(selected_subgrade) if selected_subgrade in subgrades else -1
 
-try:
-    is_valid = all(v is not None for v in [
-        annual_inc, dti, revol_util, revol_bal, open_acc, selected_term,
-        installment, loan_amount, cred_hist_years, total_acc, mort_acc
-    ]) and subgrade_encoded != -1
-except NameError:
-    is_valid = False
+    try:
+        is_valid = all(v is not None for v in [
+            annual_inc, dti, revol_util, revol_bal, open_acc, selected_term,
+            installment, loan_amount, cred_hist_years, total_acc, mort_acc
+        ]) and subgrade_encoded != -1
+    except NameError:
+        is_valid = False
 
     if 'predict_clicked' not in st.session_state:
         st.session_state.predict_clicked = False
