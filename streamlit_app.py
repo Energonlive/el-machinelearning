@@ -401,6 +401,15 @@ with tab3:
     fig_n = px.bar(df_metrics_n, x='Metric', y='Value', title='Model Performance Metrics for positive class', text='Value')
     st.plotly_chart(fig_n, use_container_width=True, key="fig_n")
 
+    st.markdown("""
+                The model performance metrics above show the effectiveness of the XGBoost Classifier in predicting loan repayment risk.
+                **Note:** I wanted a heads up on how the model performs, especially with the negative class. It's not performing quite
+                as well as I'd like due to the class imbalance in the dataset. The model is more accurate in predicting fully paid loans 
+                (positive class) than defaults (negative class).This is common challenge in imbalanced dataset and I've a bunch of techniques
+                to fix it like SMOTE and Random Undersampling. Even with those techniques, the model still struggles with the negative class.
+                So in light of that, this is where things are balancing out. 
+            """)
+
 
     st.subheader("🧠 Model Overview")
     st.markdown("""
