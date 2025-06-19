@@ -195,7 +195,7 @@ with tab1:
         except ValueError:
             if total_acc_input:
                 st.error("Please enter a valid whole number.")
-                
+
         cred_hist_input = st.text_input("Enter **Credit History Length** (in years)", key="cred_hist_input")
         cred_hist_years = None
         try:
@@ -261,15 +261,14 @@ with tab1:
                     st.subheader("Prediction Result")
                     st.success("✅ Prediction completed successfully!")
                     st.toast("Prediction complete!")
-                    result_text = "🟢 **The loan is likely to be fully paid.**"
+                    st.markdown("🟢 **The loan is likely to be fully paid.**")
                 else:
                     st.subheader("Prediction Result")
                     st.success("✅ Prediction completed successfully!")
                     st.toast("Prediction complete!")
-                    result_text = "🔴 **The loan is likely to default.**"
+                    st.markdown("🔴 **The loan is likely to default.**")
 
-                st.markdown(f"<h3 style='color:#333;'>{result_text}</h3>", unsafe_allow_html=True)
-                st.markdown(f"<b>🧮 Probability of Full Payment:</b> {prediction_proba:.2%}")
+                st.markdown(f"**🧮 Probability of Full Payment:** {prediction_proba:.2%}")
 
                 save_data = pd.DataFrame({
                     'zip_code': [selected_zipcode],
