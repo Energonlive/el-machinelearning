@@ -49,6 +49,7 @@ with tab1:
     st.write(f"You selected term: {selected_term} months")
 
     dti_input = st.text_input("Enter DTI (Debt-to-Income ratio) (%)")
+    dti = None
     try:
         dti = float(dti_input)
         if 0.0 <= dti <= 100.0:
