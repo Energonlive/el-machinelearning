@@ -34,7 +34,26 @@ with tab1:
     selected_term = st.radio("Select Term (months)", [36, 60])
     st.write(f"You selected term: {selected_term} months")
 
-    dti = st.number_input("Enter DTI (Debt-to-Income ratio) (%)", min_value=0.0, max_value=100.0, step=0.1, format="%.2f")
-    st.write(f"You entered DTI: {dti}")
+    dti_input = st.text_input("Enter DTI (Debt-to-Income ratio) (%)")
 
-    revol_util = st.number_input("Revolving Line Utilization (%) ()", min_value=0.0, max_value=100.0, step=0.1, format="%.2f")
+    try:
+        dti = float(dti_input)
+        if 0.0 <= dti <= 100.0:
+            st.success(f"DTI: {dti}%")
+        else:
+            st.warning("Please enter a value between 0 and 100.")
+    except ValueError:
+        if dti_input:
+            st.error("Please enter a valid number.")
+
+    revol_util_input = st.text_input("Enter Revolving Line Utilization (%)")
+
+    try:
+        revol_util = float(revol_util_input)
+        if 0.0 <= revol_util <= 100.0:
+            st.success(f"Revolving Utilization: {revol_util}%")
+        else:
+            st.warning("Please enter a value between 0 and 100.")
+    except ValueError:
+        if revol_util_input:
+            st.error("Please enter a valid number.")
