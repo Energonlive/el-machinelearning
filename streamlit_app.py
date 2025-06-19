@@ -31,6 +31,17 @@ with tab1:
     selected_subgrade = st.selectbox("Select Subgrade", subgrades)
     st.write(f"You selected subgrade: {selected_subgrade}")
 
+    annual_inc_input = st.text_input("Enter Annual Income ($)")
+    try:
+        annual_inc = float(annual_inc_input.replace(',', ''))
+        if annual_inc >= 0:
+            st.success(f"Annual Income: ${annual_inc:,.2f}")
+        else:
+            st.warning("Please enter a non-negative value.")
+    except ValueError:
+        if annual_inc_input:
+            st.error("Please enter a valid number.")
+
     selected_term = st.radio("Select Term (months)", [36, 60])
     st.write(f"You selected term: {selected_term} months")
 
@@ -57,3 +68,4 @@ with tab1:
     except ValueError:
         if revol_util_input:
             st.error("Please enter a valid number.")
+
