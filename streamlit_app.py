@@ -118,7 +118,7 @@ with tab1:
         if int_rate_input:
             st.error("Please enter a valid number.")
 
-    installement_display = ""
+    installment_display = ""
     if loan_amount is not None and int_rate is not None and selected_term is not None:
         monthly_rate = int_rate / 100 / 12
         try:
@@ -130,10 +130,10 @@ with tab1:
         except ZeroDivisionError:
             st.error("Installment calculation failed Please check inputs.")
     
-    st.text_input("Calculated Monthly Installment ($)", value=f"{installment_display}" if 'installement' in locals() else "", disabled=True)
+    st.text_input("Calculated Monthly Installment ($)", value=f"{installment_display}" if 'installment' in locals() else "", disabled=True)
 
     if 'installment' in locals():
-        st.write(f"Installment: ${installement_display}")
+        st.write(f"Installment: ${installment_display}")
     else:
         st.info("Installment will be calculated after entering all required fields.")
         
