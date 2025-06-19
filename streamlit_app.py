@@ -3,7 +3,7 @@ import numpy as np
 import joblib
 
 st.title('🪙 Loan Risk Prediction Machine Learning App')
-tab1, tab2 = st.tabs(["Predict Loan Risk", "Bulk Predict", "Model Information"])
+tab1, tab2, tab3 = st.tabs(["Predict Loan Risk", "Bulk Predict", "Model Information"])
 
 with tab1: 
     st.subheader('Predict Loan Risk for a Single Applicant')
