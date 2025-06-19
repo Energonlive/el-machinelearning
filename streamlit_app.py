@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import os
 import joblib
+import plotly.express as px
 
 st.title('🪙 Loan Risk Prediction Machine Learning App')
 tab1, tab2, tab3 = st.tabs(["Predict Loan Risk", "Bulk Predict", "Model Information"])
@@ -383,6 +384,15 @@ with tab3:
     st.header('ℹ️ Model Overview and Information')
     st.markdown("---")
 
+    st.subheader("📊 Model Performance Metrics for the positive class")
+    data = {'ROC_AUC':0.91, 'Precision':0.91 , 'Recall':0.94, 'F1_Score':0.92}
+    metrics = list(data.keys())
+    values = list(data.values())
+    df_metrics = pd.DataFrame(list(zip(metrics, values)), columns=['Metric', 'Value'])
+    fig = px.bar(df_metrics, x='Metric', y='Value', title='Model Performance Metrics', text='Value')
+    st.plotly_chart(fig, use_container_width=True)
+
+
     st.subheader("🧠 Model Overview")
     st.markdown("""
         This app uses a trained **XGBoost Classifier** to predict loan repayment risk based on LendingClub-style financial data.
@@ -403,7 +413,7 @@ with tab3:
         - Installment calculation based on loan amount, interest rate, and term.
         - Results saved to `predictions.csv` for easy access and download.
         - Streamlit app for interactive user experience.
-        - Developed by [Your Name] - [Your Contact Info]
+        - Developed by [Adewumi Olorunjuwon Samuel] - [adewumiolorunjuwon@gmail.com]
         - Source code available on [GitHub](https://github.com/Energonlive/el-machinelearning)
         - For any issues or feature requests, please open an issue on the GitHub repository.
         - Thank you for using this app! 🙏
