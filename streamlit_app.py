@@ -390,7 +390,7 @@ with tab3:
     values_p = list(data_p.values())
     df_metrics_p = pd.DataFrame(list(zip(metrics_p, values_p)), columns=['Metric', 'Value'])
     fig_p = px.bar(df_metrics_p, x='Metric', y='Value', title='Model Performance Metrics for positive class', text='Value')
-    st.plotly_chart(fig_p, use_container_width=True)
+    st.plotly_chart(fig_p, use_container_width=True, key="fig_p")
 
 
     st.subheader("📊 Model Performance Metrics for the negative class")
@@ -399,7 +399,7 @@ with tab3:
     values_n = list(data_n.values())
     df_metrics_n = pd.DataFrame(list(zip(metrics_n, values_n)), columns=['Metric', 'Value'])
     fig_n = px.bar(df_metrics_p, x='Metric', y='Value', title='Model Performance Metrics for positive class', text='Value')
-    st.plotly_chart(fig_n, use_container_width=True)
+    st.plotly_chart(fig_n, use_container_width=True, key="fig_n")
 
 
     st.subheader("🧠 Model Overview")
