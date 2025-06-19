@@ -385,12 +385,21 @@ with tab3:
     st.markdown("---")
 
     st.subheader("📊 Model Performance Metrics for the positive class")
-    data = {'ROC_AUC':0.91, 'Precision':0.91 , 'Recall':0.94, 'F1_Score':0.92}
-    metrics = list(data.keys())
-    values = list(data.values())
-    df_metrics = pd.DataFrame(list(zip(metrics, values)), columns=['Metric', 'Value'])
-    fig = px.bar(df_metrics, x='Metric', y='Value', title='Model Performance Metrics', text='Value')
-    st.plotly_chart(fig, use_container_width=True)
+    data_p = {'ROC_AUC':0.91, 'Precision':0.91 , 'Recall':0.94, 'F1_Score':0.92}
+    metrics_p = list(data_p.keys())
+    values_p = list(data_p.values())
+    df_metrics_p = pd.DataFrame(list(zip(metrics_p, values_p)), columns=['Metric', 'Value'])
+    fig_p = px.bar(df_metrics_p, x='Metric', y='Value', title='Model Performance Metrics for positive class', text='Value')
+    st.plotly_chart(fig_p, use_container_width=True)
+
+
+    st.subheader("📊 Model Performance Metrics for the negative class")
+    data_n = {'Precision':0.72 , 'Recall':0.61, 'F1_Score':0.66}
+    metrics_n = list(data_n.keys())
+    values_n = list(data_n.values())
+    df_metrics_n = pd.DataFrame(list(zip(metrics_n, values_n)), columns=['Metric', 'Value'])
+    fig_n = px.bar(df_metrics_p, x='Metric', y='Value', title='Model Performance Metrics for positive class', text='Value')
+    st.plotly_chart(fig_n, use_container_width=True)
 
 
     st.subheader("🧠 Model Overview")
@@ -400,6 +409,7 @@ with tab3:
         **Key Details:**
         - Model: `XGBClassifier`
         - Training ROC AUC: ~0.91
+        - Accuracy: ~0.88
         - Top Features: `zip_code`, `subgrade`, `annual_inc`, `dti`, `revol_util`, etc.
         - Pipeline includes preprocessing steps like:
         - One-hot encoding (`zip_code`, `home_ownership`, `verification_status`)
