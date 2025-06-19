@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import os
 import joblib
-import streamlit.runtime.scriptrunner.script_run_context as script_run_context
 
 st.title('🪙 Loan Risk Prediction Machine Learning App')
 tab1, tab2, tab3 = st.tabs(["Predict Loan Risk", "Bulk Predict", "Model Information"])
@@ -279,21 +278,13 @@ with tab1:
 
                 st.success("📁 Prediction saved to predictions.csv ✅")
 
-                def is_streamlit_cloud():
-                    try:
-                        ctx = script_run_context.get_script_run_ctx()
-                        return ctx is not None and "cloud" in ctx.session_id
-                    except:
-                        return False
-                    
-                if is_streamlit_cloud():
-                    if os.path.exists("predictions.csv"):
-                        with open("predictions.csv", "rb") as file:
-                            st.download_button(
-                                label="📥 Download predictions.csv",
-                                data=file,
-                                file_name="predictions.csv",
-                                mime="text/csv"
-                            )
+                if os.path.exists("predictions.csv"):
+                    with open("predictions.csv", "rb") as file:
+                        st.download_button(
+                            label="📥 Download predictions.csv",
+                            data=file,
+                            file_name="predictions.csv",
+                            mime="text/csv"
+                        )
 
             st.session_state.predict_clicked = False
