@@ -10,7 +10,6 @@ tab1, tab2, tab3 = st.tabs(["Predict Loan Risk", "Bulk Predict", "Model Informat
 with tab1: 
     st.subheader('Predict Loan Risk for a Single Applicant')
 
-    # Input fields for the user to enter applicant details
     zipcode_locations = {
         "22690": "22690 - Springfield, VA",
         "05113": "05113 - Montpelier, VT",
