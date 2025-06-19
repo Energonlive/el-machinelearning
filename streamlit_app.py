@@ -131,8 +131,7 @@ with tab1:
             st.error("Installment calculation failed Please check inputs.")
     
     st.text_input("Calculated Monthly Installment ($)", value=f"{installment_display}" if 'installement' in locals() else "", disabled=True)
-    
-    st.info("Installment will be calculated after entering all required fields.")  
+
     if 'installment' in locals():
         st.write(f"Installment: ${installement_display}")
     else:
@@ -141,7 +140,8 @@ with tab1:
     st.markdown(
         """
         **Note:** Installment is calculated using the formula:  
-        `Installment = (Loan Amount x Monthly Interest Rate) / (1 - (1 + Monthly Interest Rate)^-Term)`  
+        `Installment = (Loan Amount x Monthly Interest Rate) / (1 - (1 + Monthly Interest Rate)^-Term)`
+
         Where:  
         - Monthly Interest Rate = Annual Interest Rate / 100 / 12
         """
