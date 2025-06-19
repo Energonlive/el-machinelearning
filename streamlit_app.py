@@ -379,3 +379,65 @@ with tab2:
         except Exception as e:
             st.error(f"Error processing file: {e}")
 
+with tab3: 
+    st.header('ℹ️ Model Overview and Information')
+    st.markdown("---")
+
+    st.subheader("🧠 Model Overview")
+    st.markdown("""
+        This app uses a trained **XGBoost Classifier** to predict loan repayment risk based on LendingClub-style financial data.
+
+        **Key Details:**
+        - Model: `XGBClassifier`
+        - Training ROC AUC: ~0.91
+        - Top Features: `zip_code`, `subgrade`, `annual_inc`, `dti`, `revol_util`, etc.
+        - Pipeline includes preprocessing steps like:
+        - One-hot encoding (`zip_code`, `home_ownership`, `verification_status`)
+        - Label encoding (`subgrade`)
+        - Log transforms (`annual_inc`, `revol_bal`)
+        - Undersammpling to address class imbalance.
+        - Hyperparameter tuning using `Optuna` for optimal performance.
+        - Model saved as `xgb_final_pipeline.joblib`.
+        - Single applicant prediction with detailed input fields.
+        - Bulk prediction feature for processing multiple applicants at once.
+        - Installment calculation based on loan amount, interest rate, and term.
+        - Results saved to `predictions.csv` for easy access and download.
+        - Streamlit app for interactive user experience.
+        - Developed by [Your Name] - [Your Contact Info]
+        - Source code available on [GitHub](https://github.com/Energonlive/el-machinelearning)
+        - For any issues or feature requests, please open an issue on the GitHub repository.
+        - Thank you for using this app! 🙏
+    """)
+
+    st.markdown("""
+        **Note:** The model is trained on a dataset with a class imbalance, where the majority of loans are fully paid.
+        The model uses undersampling to address the imbalance during training.
+    """)
+
+    st.subheader("📌 Features Used in Prediction")
+    features = [
+        "zip_code_* (one-hot encoded)", "subgrade (label-encoded 0-34)", "annual_inc (log transformed)",
+        "term", "dti", "revol_util", "revol_bal (log transformed)", "open_acc", "installment",
+        "loan_amnt", "int_rate", "home_ownership_* (one-hot encoded)", "cred_hist_years",
+        "verification_status_* (one-hot encoded)", "total_acc", "mort_acc"
+    ]
+    st.write("The model uses the following features:")
+    st.markdown("\n".join([f"- {f}" for f in features]))
+
+    st.subheader("🧾 Interpreting Predictions")
+    st.markdown("""
+        - A prediction of **1** means the model expects the loan will be **fully paid**.
+        - A prediction of **0** means the loan will likely **default**.
+        - You also get the **probability** of full payment.
+
+        > Higher probability → safer borrower  
+        > Lower probability → riskier borrower
+    """)
+
+    st.subheader("⚠️ Limitations & Notes")
+    st.markdown("""
+        - Predictions are based on historical patterns and not guaranteed.
+        - Model does not account for recent changes in economic conditions or borrower behavior.
+        - Interpret results as **risk guidance**, not approval/denial advice.
+    """)
+
