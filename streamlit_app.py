@@ -126,7 +126,7 @@ with tab1:
                 installment = loan_amount / selected_term
             else:
                 installment = (loan_amount * monthly_rate) / (1 - (1 + monthly_rate) ** -selected_term)
-            installment_display = f"{installment:.2f}"
+            installment_display = f"{installment:,.2f}"
         except ZeroDivisionError:
             st.error("Installment calculation failed Please check inputs.")
     
