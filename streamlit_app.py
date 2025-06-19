@@ -10,6 +10,108 @@ tab1, tab2, tab3 = st.tabs(["Predict Loan Risk", "Bulk Predict", "Model Informat
 with tab1: 
     st.subheader('Predict Loan Risk for a Single Applicant')
 
+    st.header("Loan Information")
+    st.markdown("---")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        loan_amount_input = st.text_input("Enter **Loan Amount** ($) (e.g., 10000 or 10,000)", key="loan_amount_input")
+        loan_amount = None
+        try:
+            loan_amount = float(loan_amount_input.strip().replace(',', ''))
+            if loan_amount > 0:
+                st.success(f"Loan Amount: ${loan_amount:,.2f}")
+            else:
+                st.warning("Loan amount must be greater than 0.")
+        except ValueError:
+            if loan_amount_input:
+                st.error("Please enter a valid number.")
+
+        selected_term = st.radio("Select **Term** (months)", [36, 60], horizontal=True, key="selected_term")
+        st.write(f"You selected term: {selected_term} months")
+
+    with col2:
+        int_rate_input = st.text_input("Enter **Interest Rate** (%) (per annum, e.g., 10.5)", key="int_rate_input")
+        int_rate = None
+        try:
+            int_rate = float(int_rate_input.strip())
+            if 0.0 <= int_rate <= 100.0:
+                st.success(f"Interest Rate: {int_rate:.2f}%")
+            else:
+                st.warning("Interest rate must be between 0 and 100.")
+        except ValueError:
+            if int_rate_input:
+                st.error("Please enter a valid number.")
+
+        subgrades = [f"{grade}{i}" for grade in "ABCDEFG" for i in range(1, 6)]
+        selected_subgrade = st.selectbox("Select **Subgrade**", subgrades, key="selected_subgrade")
+        st.write(f"You selected subgrade: {selected_subgrade}")
+
+    installment_display = ""
+    if loan_amount is not None and int_rate is not None and selected_term is not None:
+        monthly_rate = int_rate / 100 / 12
+        try:
+            if monthly_rate == 0:
+                installment = loan_amount / selected_term
+            else:
+                installment = (loan_amount * monthly_rate) / (1 - (1 + monthly_rate) ** -selected_term)
+            installment_display = f"{installment:,.2f}"
+        except ZeroDivisionError:
+            st.error("Installment calculation failed. Please check inputs.")
+
+    st.text_input("Calculated **Monthly Installment** ($)", value=f"{installment_display}" if 'installment' in locals() else "", disabled=True, key="calculated_installment")
+
+    if 'installment' in locals():
+        st.write(f"Installment: ${installment_display}")
+    else:
+        st.info("Installment will be calculated after entering all required fields.")
+
+    st.markdown(
+        """
+        **Note:** Installment is calculated using the formula:
+        `Installment = (Loan Amount x Monthly Interest Rate) / (1 - (1 + Monthly Interest Rate)^-Term)`
+
+        Where:
+        - Monthly Interest Rate = Annual Interest Rate / 100 / 12
+        """
+    )
+
+    st.header("Personal Information")
+    st.markdown("---")
+
+    col3, col4 = st.columns(2)
+    with col3:
+        annual_inc_input = st.text_input("Enter **Annual Income** ($) (e.g., 10000 or 10,000)", key="annual_inc_input")
+        annual_inc = None
+        try:
+            annual_inc = float(annual_inc_input.strip().replace(',', ''))
+            if annual_inc >= 0:
+                st.success(f"Annual Income: ${annual_inc:,.2f}")
+            else:
+                st.warning("Please enter a non-negative value.")
+        except ValueError:
+            if annual_inc_input:
+                st.error("Please enter a valid number.")
+
+        selected_home_ownership_status = st.selectbox("Select **Home Ownership Status**", ["Mortgage", "Own", "Rent", "Other"], key="home_ownership_status")
+        st.write(f"You selected: {selected_home_ownership_status}")
+
+    with col4:
+        dti_input = st.text_input("Enter **DTI** (Debt-to-Income ratio) (%)", key="dti_input")
+        dti = None
+        try:
+            dti = float(dti_input.strip())
+            if 0.0 <= dti <= 100.0:
+                st.success(f"DTI: {dti}%")
+            else:
+                st.warning("Please enter a value between 0 and 100.")
+        except ValueError:
+            if dti_input:
+                st.error("Please enter a valid number.")
+
+        selected_verification_status = st.selectbox("Select **Verification Status**", ["Source Verified", "Verified", "Not Verified"], key="verification_status")
+        st.write(f"You selected: {selected_verification_status}")
+
     zipcode_locations = {
         "22690": "22690 - Springfield, VA",
         "05113": "05113 - Montpelier, VT",
@@ -22,174 +124,89 @@ with tab1:
         "86630": "86630 - Casa Grande, AZ",
         "93700": "93700 - Fresno, CA"
     }
-
-    selected_zipcode = st.selectbox("Select Zipcode", 
-                            list(zipcode_locations.keys()),
-                            format_func=lambda x: zipcode_locations[x])
+    selected_zipcode = st.selectbox("Select **Zipcode**",
+                                    list(zipcode_locations.keys()),
+                                    format_func=lambda x: zipcode_locations[x], key="selected_zipcode")
     st.write(f"You selected zipcode: {selected_zipcode}")
 
-    subgrades = [f"{grade}{i}" for grade in "ABCDEFG" for i in range(1, 6)]
-    selected_subgrade = st.selectbox("Select Subgrade", subgrades)
-    st.write(f"You selected subgrade: {selected_subgrade}")
 
-    annual_inc_input = st.text_input("Enter Annual Income ($) (e.g 10000 or 10,000)")
-    annual_inc = None
-    try:
-        annual_inc = float(annual_inc_input.strip().replace(',', ''))
-        if annual_inc >= 0:
-            st.success(f"Annual Income: ${annual_inc:,.2f}")
-        else:
-            st.warning("Please enter a non-negative value.")
-    except ValueError:
-        if annual_inc_input:
-            st.error("Please enter a valid number.")
+    st.header("Credit Information")
+    st.markdown("---")
 
-    selected_term = st.radio("Select Term (months)", [36, 60])
-    st.write(f"You selected term: {selected_term} months")
-
-    dti_input = st.text_input("Enter DTI (Debt-to-Income ratio) (%)")
-    dti = None
-    try:
-        dti = float(dti_input.strip())
-        if 0.0 <= dti <= 100.0:
-            st.success(f"DTI: {dti}%")
-        else:
-            st.warning("Please enter a value between 0 and 100.")
-    except ValueError:
-        if dti_input:
-            st.error("Please enter a valid number.")
-
-    revol_util_input = st.text_input("Enter Revolving Line Utilization (%)")
-    revol_util = None
-    try:
-        revol_util = float(revol_util_input.strip())
-        if 0.0 <= revol_util <= 100.0:
-            st.success(f"Revolving Utilization: {revol_util}%")
-        else:
-            st.warning("Please enter a value between 0 and 100.")
-    except ValueError:
-        if revol_util_input:
-            st.error("Please enter a valid number.")
-
-
-    revol_bal_input = st.text_input("Enter Revolving Balance ($) (e.g 10000 or 10,000)")
-    revol_bal = None
-    try:
-        revol_bal = float(revol_bal_input.strip().replace(',', ''))
-        if revol_bal >= 0:
-            st.success(f"Revolving Balance: ${revol_bal:,.2f}")
-        else:
-            st.warning("Revolving balance cannot be negative.")
-    except ValueError:
-        if revol_bal_input:
-            st.error("Please enter a valid number.")
-
-    open_acc_input = st.text_input("Enter Number of Open Credit Lines")
-    open_acc = None
-    try:
-        open_acc = int(open_acc_input.strip())
-        if open_acc >= 0:
-            st.success(f"Open Credit Lines: {open_acc}")
-        else:
-            st.warning("Number of open accounts cannot be negative.")
-    except ValueError:
-        if open_acc_input:
-            st.error("Please enter a valid whole number.")
-
-    loan_amount_input = st.text_input("Enter Loan Amount ($) (e.g 10000 or 10,000)")
-    loan_amount = None
-    try:
-        loan_amount = float(loan_amount_input.strip().replace(',', ''))
-        if loan_amount > 0:
-            st.success(f"Loan Amount: ${loan_amount:,.2f}")
-        else:
-            st.warning("Loan amount must be greater than 0.")
-    except ValueError:
-        if loan_amount_input:
-            st.error("Please enter a valid number.")
-
-    int_rate_input = st.text_input("Enter Interest Rate (%) (per annum, e.g 10.5)")
-    int_rate = None
-    try:
-        int_rate = float(int_rate_input.strip())
-        if 0.0 <= int_rate <= 100.0:
-            st.success(f"Interest Rate: {int_rate:.2f}%")
-        else:
-            st.warning("Interest rate must be between 0 and 100.")
-    except ValueError:
-        if int_rate_input:
-            st.error("Please enter a valid number.")
-
-    installment_display = ""
-    if loan_amount is not None and int_rate is not None and selected_term is not None:
-        monthly_rate = int_rate / 100 / 12
+    col5, col6 = st.columns(2)
+    with col5:
+        revol_util_input = st.text_input("Enter **Revolving Line Utilization** (%)", key="revol_util_input")
+        revol_util = None
         try:
-            if monthly_rate == 0:
-                installment = loan_amount / selected_term
+            revol_util = float(revol_util_input.strip())
+            if 0.0 <= revol_util <= 100.0:
+                st.success(f"Revolving Utilization: {revol_util}%")
             else:
-                installment = (loan_amount * monthly_rate) / (1 - (1 + monthly_rate) ** -selected_term)
-            installment_display = f"{installment:,.2f}"
-        except ZeroDivisionError:
-            st.error("Installment calculation failed Please check inputs.")
-    
-    st.text_input("Calculated Monthly Installment ($)", value=f"{installment_display}" if 'installment' in locals() else "", disabled=True)
+                st.warning("Please enter a value between 0 and 100.")
+        except ValueError:
+            if revol_util_input:
+                st.error("Please enter a valid number.")
 
-    if 'installment' in locals():
-        st.write(f"Installment: ${installment_display}")
-    else:
-        st.info("Installment will be calculated after entering all required fields.")
-        
-    st.markdown(
-        """
-        **Note:** Installment is calculated using the formula:  
-        `Installment = (Loan Amount x Monthly Interest Rate) / (1 - (1 + Monthly Interest Rate)^-Term)`
+        open_acc_input = st.text_input("Enter **Number of Open Credit Lines**", key="open_acc_input")
+        open_acc = None
+        try:
+            open_acc = int(open_acc_input.strip())
+            if open_acc >= 0:
+                st.success(f"Open Credit Lines: {open_acc}")
+            else:
+                st.warning("Number of open accounts cannot be negative.")
+        except ValueError:
+            if open_acc_input:
+                st.error("Please enter a valid whole number.")
 
-        Where:  
-        - Monthly Interest Rate = Annual Interest Rate / 100 / 12
-        """
-    )
-    
-    selected_home_ownership_status = st.selectbox("Select Home Ownership Status", ["Mortgage", "Own", "Rent", "Other"])
-    st.write(f"You selected: {selected_home_ownership_status}")
+        mort_acc_input = st.text_input("Enter **Number of Mortgage Accounts**", key="mort_acc_input")
+        mort_acc = None
+        try:
+            mort_acc = int(mort_acc_input.strip())
+            if mort_acc >= 0:
+                st.success(f"Mortgage Accounts: {mort_acc}")
+            else:
+                st.warning("Mortgage accounts cannot be negative.")
+        except ValueError:
+            if mort_acc_input:
+                st.error("Please enter a valid whole number.")
 
-    cred_hist_input = st.text_input("Enter Credit History Length (in years)")
-    cred_hist_years = None
-    try:
-        cred_hist_years = float(cred_hist_input.strip())
-        if cred_hist_years >= 0:
-            st.success(f"Credit History Length: {cred_hist_years} years")
-        else:
-            st.warning("Credit history length cannot be negative.")
-    except ValueError:
-        if cred_hist_input:
-            st.error("Please enter a valid whole number.")
-    
-    selected_verification_status = st.selectbox("Select Verification Status", ["Source Verified", "Verified", "Not Verified"])
-    st.write(f"You selected: {selected_verification_status}")
+    with col6:
+        revol_bal_input = st.text_input("Enter **Revolving Balance** ($) (e.g., 10000 or 10,000)", key="revol_bal_input")
+        revol_bal = None
+        try:
+            revol_bal = float(revol_bal_input.strip().replace(',', ''))
+            if revol_bal >= 0:
+                st.success(f"Revolving Balance: ${revol_bal:,.2f}")
+            else:
+                st.warning("Revolving balance cannot be negative.")
+        except ValueError:
+            if revol_bal_input:
+                st.error("Please enter a valid number.")
 
-    total_acc_input = st.text_input("Enter Total Number of Credit Accounts")
-    total_acc = None
-    try:
-        total_acc = int(total_acc_input.strip())
-        if total_acc >= 0:
-            st.success(f"Total Credit Accounts: {total_acc}")
-        else:
-            st.warning("Total accounts cannot be negative.")
-    except ValueError:
-        if total_acc_input:
-            st.error("Please enter a valid whole number.")
+        cred_hist_input = st.text_input("Enter **Credit History Length** (in years)", key="cred_hist_input")
+        cred_hist_years = None
+        try:
+            cred_hist_years = float(cred_hist_input.strip())
+            if cred_hist_years >= 0:
+                st.success(f"Credit History Length: {cred_hist_years} years")
+            else:
+                st.warning("Credit history length cannot be negative.")
+        except ValueError:
+            if cred_hist_input:
+                st.error("Please enter a valid whole number.")
 
-    mort_acc_input = st.text_input("Enter Number of Mortgage Accounts")
-    mort_acc = None
-    try:
-        mort_acc = int(mort_acc_input.strip())
-        if mort_acc >= 0:
-            st.success(f"Mortgage Accounts: {mort_acc}")
-        else:
-            st.warning("Mortgage accounts cannot be negative.")
-    except ValueError:
-        if mort_acc_input:
-            st.error("Please enter a valid whole number.")
+        total_acc_input = st.text_input("Enter **Total Number of Credit Accounts**", key="total_acc_input")
+        total_acc = None
+        try:
+            total_acc = int(total_acc_input.strip())
+            if total_acc >= 0:
+                st.success(f"Total Credit Accounts: {total_acc}")
+            else:
+                st.warning("Total accounts cannot be negative.")
+        except ValueError:
+            if total_acc_input:
+                st.error("Please enter a valid whole number.")
 
 
 
